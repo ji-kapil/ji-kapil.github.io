@@ -1,13 +1,385 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Software Engineer Portfolio</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dynamic Developer Profile</title>
+  <style>
+    /* Simple modern reset */
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa7bf; --accent:#6ee7b7; --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:14px; --fw-600:600;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#e6eef8;background:linear-gradient(180deg,#051025 0%, #071426 60%);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+    .wrap{max-width:1100px;margin:28px auto;padding:22px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:grid;place-items:center;font-weight:700;color:#082033}
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+
+    .grid{display:grid;grid-template-columns: 360px 1fr;gap:20px;margin-top:20px}
+
+    /* left card */
+    .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    .profile-pic{width:100%;height:220px;border-radius:10px;background:linear-gradient(90deg,#0b1220,#07263a);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:32px}
+    .btn{display:inline-block;padding:8px 12px;border-radius:10px;background:var(--glass);color:var(--accent);font-weight:600;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .edit-row{display:flex;gap:8px;margin-top:12px}
+
+    .stats{display:flex;gap:10px;margin-top:14px}
+    .stat{flex:1;background:var(--glass-2);padding:10px;border-radius:10px;text-align:center}
+    .stat h3{margin:0;font-size:18px}
+    .stat p{margin:6px 0 0;color:var(--muted);font-size:12px}
+
+    .skills{margin-top:12px}
+    .skill{margin-bottom:10px}
+    .skill .label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+    .bar{height:10px;background:rgba(255,255,255,0.04);border-radius:20px;margin-top:6px;overflow:hidden}
+    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);width:40%}
+
+    /* right column */
+    .hero{display:flex;align-items:flex-start;gap:16px}
+    .hero-left{flex:1}
+    .hero h2{margin:0;font-size:28px}
+    .type{color:var(--muted);margin-top:6px}
+    .actions{margin-top:12px;display:flex;gap:10px}
+
+    .projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}
+    .proj{background:var(--glass);padding:12px;border-radius:10px;cursor:pointer}
+    .proj h4{margin:0 0 6px 0}
+    .proj p{margin:0;color:var(--muted);font-size:13px}
+
+    .about{margin-top:16px;color:var(--muted);line-height:1.5}
+
+    footer{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* responsive */
+    @media (max-width:900px){.grid{grid-template-columns:1fr;}.profile-pic{height:160px}}
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.9));z-index:80}
+    .modal.show{display:grid}
+    .modal .panel{width:92%;max-width:720px;background:#031226;padding:18px;border-radius:12px}
+
+    /* tiny inputs */
+    input,textarea{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:inherit;width:100%}
+
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.02);font-size:13px}
+
+  </style>
 </head>
 <body>
-  <h1>Welcome to My Portfolio!</h1>
-  <p>Hi, I am Kapil Gangwar, a software engineer.</p>
-  <p>Check out my projects on <a href="https://github.com/ji-kapil">GitHub</a>.</p>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" id="logo">DP</div>
+        <div>
+          <h1 id="name">Your Name</h1>
+          <div class="sub" id="tagline">DSA | Java | System Design (learning)</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn" id="editProfileBtn">Edit Profile</button>
+        <button class="btn" id="themeToggle">Toggle Theme</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section>
+        <div class="card">
+          <div class="profile-pic" id="avatar">J</div>
+          <div class="edit-row">
+            <button class="btn" id="downloadResume">Download Resume</button>
+            <button class="btn" id="shareLink">Copy Link</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <h3 id="lcCount">0</h3>
+              <p>LeetCode solved</p>
+            </div>
+            <div class="stat">
+              <h3 id="hrCount">0</h3>
+              <p>HackerRank solved</p>
+            </div>
+            <div class="stat">
+              <h3 id="projectsCount">0</h3>
+              <p>Projects</p>
+            </div>
+          </div>
+
+          <div class="skills">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="sub">Skills</div>
+              <div class="chip" id="learning">Learning: System Design</div>
+            </div>
+            <div class="skill">
+              <div class="label"><span>DSA (LeetCode/HackerRank)</span><span id="p1">80%</span></div>
+              <div class="bar"><i id="s1" style="width:80%"></i></div>
+            </div>
+            <div class="skill">
+              <div class="label"><span>Java</span><span id="p2">75%</span></div>
+              <div class="bar"><i id="s2" style="width:75%"></i></div>
+            </div>
+            <div class="skill">
+              <div class="label"><span>Computer Networks</span><span id="p3">68%</span></div>
+              <div class="bar"><i id="s3" style="width:68%"></i></div>
+            </div>
+            <div class="skill">
+              <div class="label"><span>DBMS</span><span id="p4">70%</span></div>
+              <div class="bar"><i id="s4" style="width:70%"></i></div>
+            </div>
+            <div class="skill">
+              <div class="label"><span>OS</span><span id="p5">65%</span></div>
+              <div class="bar"><i id="s5" style="width:65%"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="sub">Contact</div>
+            <div class="sub">Quick actions</div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <input id="emailInput" placeholder="your.email@example.com" />
+            <button class="btn" id="saveContact">Save</button>
+          </div>
+          <div class="about" id="contactSaved" style="display:none;margin-top:8px">Saved to local profile.</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="hero card">
+          <div class="hero-left">
+            <h2 id="headline">Hi, I'm a Developer focused on Algorithms & Backend</h2>
+            <div class="type" id="subline">I practice DSA on LeetCode and HackerRank. Currently learning System Design. Experienced in Java, DBMS, Computer Networks, and OS.</div>
+
+            <div class="actions">
+              <button class="btn" id="openProjects">View Projects</button>
+              <button class="btn" id="contactMe">Contact Me</button>
+            </div>
+
+            <div class="about" id="aboutMe">Passionate about problem solving and building scalable systems. I solve algorithmic problems daily and love designing services and APIs.</div>
+          </div>
+          <div style="width:220px">
+            <div style="background:var(--glass);padding:12px;border-radius:10px">
+              <div class="sub">Top Platforms</div>
+              <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+                <div class="chip">LeetCode</div>
+                <div class="chip">HackerRank</div>
+                <div class="chip">Java</div>
+                <div class="chip">System Design (learning)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="sub">Projects</div>
+            <div class="sub"><small>Click to open</small></div>
+          </div>
+          <div class="projects" id="projectsList">
+            <!-- JS will inject sample projects -->
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="sub">Education & Experience</div>
+          <div style="margin-top:10px;color:var(--muted)">
+            <strong>Bachelor of Computer Science</strong><br>
+            <small>Topics: Computer Networks, DBMS, OS</small>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
+            <strong>Currently</strong> - Practicing DSA on LeetCode / HackerRank and learning System Design.
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <footer>Made with ❤️ — Dynamic single-file profile. Edit, save, host anywhere.</footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="panel" id="modalContent"></div>
+  </div>
+
+  <script>
+    /* ====== Basic dynamic functionality ====== */
+    const defaultProfile = {
+      name: 'Your Name',
+      tagline: 'DSA | Java | System Design (learning)',
+      headline: "Hi, I'm a Developer focused on Algorithms & Backend",
+      subline: 'I practice DSA on LeetCode and HackerRank. Currently learning System Design. Experienced in Java, DBMS, Computer Networks, and OS.',
+      avatarLetter: 'J',
+      lc: 120, // placeholder counts — you can customize
+      hr: 80,
+      projects: [
+        {title:'Problem Tracker',desc:'A tool to track LeetCode practice and categorize problems by topic.',tags:['JS','LocalStorage'],demo:'#'},
+        {title:'Mini DBMS',desc:'A teaching DBMS implemented in Java (toy project).',tags:['Java','DBMS'],demo:'#'},
+        {title:'Chat Service',desc:'Prototype chat backend showing basic system design ideas.',tags:['Design','API'],demo:'#'}
+      ],
+      contact: ''
+    }
+
+    // Load profile from localStorage
+    const saved = JSON.parse(localStorage.getItem('dynProfile') || 'null')
+    const profile = Object.assign({}, defaultProfile, saved || {})
+
+    // apply to DOM
+    function renderProfile(){
+      document.getElementById('name').textContent = profile.name
+      document.getElementById('tagline').textContent = profile.tagline
+      document.getElementById('avatar').textContent = (profile.avatarLetter||profile.name[0]||'U').toUpperCase()
+      document.getElementById('logo').textContent = (profile.avatarLetter||profile.name[0]||'U').toUpperCase()
+      document.getElementById('headline').textContent = profile.headline
+      document.getElementById('subline').textContent = profile.subline
+      document.getElementById('lcCount').textContent = profile.lc
+      document.getElementById('hrCount').textContent = profile.hr
+      document.getElementById('projectsCount').textContent = profile.projects.length
+
+      const projectsList = document.getElementById('projectsList')
+      projectsList.innerHTML = ''
+      profile.projects.forEach((p,idx)=>{
+        const el = document.createElement('div')
+        el.className = 'proj'
+        el.innerHTML = `<h4>${p.title}</h4><p>${p.desc}</p><div style=\"margin-top:8px;display:flex;gap:6px\">${p.tags.map(t=>`<div class='chip'>${t}</div>`).join('')}</div>`
+        el.addEventListener('click',()=>openModal(p))
+        projectsList.appendChild(el)
+      })
+    }
+
+    function saveProfile(){
+      localStorage.setItem('dynProfile', JSON.stringify(profile))
+    }
+
+    // modal
+    const modal = document.getElementById('modal')
+    function openModal(p){
+      document.getElementById('modalContent').innerHTML = `<h3 style='margin-top:0'>${p.title}</h3><p style='color:var(--muted)'>${p.desc}</p><div style='margin-top:10px'>Tags: ${p.tags.join(', ')}</div><div style='margin-top:12px'><a href='${p.demo}' class='btn'>Open Demo / Repo</a> <button class='btn' id='closeModal'>Close</button></div>`
+      modal.classList.add('show')
+      document.getElementById('closeModal').addEventListener('click',()=>modal.classList.remove('show'))
+    }
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('show') })
+
+    // edit profile button
+    document.getElementById('editProfileBtn').addEventListener('click', ()=>{
+      const form = `
+        <h2>Edit profile</h2>
+        <div style='display:grid;gap:8px;margin-top:8px'>
+          <input id='fName' placeholder='Full name' value='${escapeHtml(profile.name)}' />
+          <input id='fTag' placeholder='Short tagline' value='${escapeHtml(profile.tagline)}' />
+          <input id='fAvatar' placeholder='Avatar letter' value='${escapeHtml(profile.avatarLetter||'')}' />
+          <input id='fLC' placeholder='LeetCode solved count' value='${profile.lc}' />
+          <input id='fHR' placeholder='HackerRank solved count' value='${profile.hr}' />
+          <textarea id='fAbout' placeholder='Short headline' rows='3'>${escapeHtml(profile.headline)}</textarea>
+          <div style='display:flex;gap:8px'><button class='btn' id='saveBtn'>Save</button><button class='btn' id='cancelBtn'>Cancel</button></div>
+        </div>
+      `
+      document.getElementById('modalContent').innerHTML = form
+      modal.classList.add('show')
+      document.getElementById('cancelBtn').addEventListener('click',()=>modal.classList.remove('show'))
+      document.getElementById('saveBtn').addEventListener('click', ()=>{
+        profile.name = document.getElementById('fName').value || profile.name
+        profile.tagline = document.getElementById('fTag').value || profile.tagline
+        profile.avatarLetter = document.getElementById('fAvatar').value || (profile.name[0] || 'U')
+        profile.lc = parseInt(document.getElementById('fLC').value) || profile.lc
+        profile.hr = parseInt(document.getElementById('fHR').value) || profile.hr
+        profile.headline = document.getElementById('fAbout').value || profile.headline
+        saveProfile()
+        renderProfile()
+        modal.classList.remove('show')
+      })
+    })
+
+    // contact save
+    document.getElementById('saveContact').addEventListener('click', ()=>{
+      const v = document.getElementById('emailInput').value
+      profile.contact = v
+      saveProfile()
+      document.getElementById('contactSaved').style.display = 'block'
+      setTimeout(()=>document.getElementById('contactSaved').style.display = 'none',2000)
+    })
+
+    // open projects
+    document.getElementById('openProjects').addEventListener('click', ()=>{
+      if(profile.projects.length) openModal(profile.projects[0])
+    })
+
+    // contact me -> shows modal with email or contact form
+    document.getElementById('contactMe').addEventListener('click', ()=>{
+      const body = profile.contact ? `<p>Send email to: <strong>${profile.contact}</strong></p>` : `<p>No contact saved. Add your email in the left panel.</p>`
+      document.getElementById('modalContent').innerHTML = `<h3>Contact</h3>${body}<div style='margin-top:10px'><button id='closeModal2' class='btn'>Close</button></div>`
+      modal.classList.add('show')
+      document.getElementById('closeModal2').addEventListener('click',()=>modal.classList.remove('show'))
+    })
+
+    // resume download -> generates a simple text resume from profile
+    document.getElementById('downloadResume').addEventListener('click', ()=>{
+      const txt = `Resume - ${profile.name}\n\nTagline: ${profile.tagline}\n\nHeadline: ${profile.headline}\n\nSkills: DSA (LeetCode/HackerRank), Java, Computer Networks, DBMS, OS, System Design (learning)\n\nProjects:\n` + profile.projects.map((p,i)=>`${i+1}. ${p.title} - ${p.desc}`).join('\n')
+      const blob = new Blob([txt],{type:'text/plain'})
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url; a.download = (profile.name||'resume') + '.txt'
+      a.click(); URL.revokeObjectURL(url)
+    })
+
+    // copy link (simulated) - saves to clipboard a JSON share string
+    document.getElementById('shareLink').addEventListener('click', async ()=>{
+      const data = {name:profile.name,tagline:profile.tagline,lc:profile.lc,hr:profile.hr,projects:profile.projects.length}
+      try{ await navigator.clipboard.writeText('profile://'+btoa(JSON.stringify(data)))
+        alert('Profile summary copied to clipboard! (paste anywhere)')
+      }catch(e){alert('Could not copy. Your browser might block clipboard access.')}
+    })
+
+    // theme toggle (simple lighten)
+    document.getElementById('themeToggle').addEventListener('click', ()=>{
+      document.body.classList.toggle('light');
+      if(document.body.classList.contains('light')){
+        document.documentElement.style.setProperty('--bg','#f6f9ff')
+        document.documentElement.style.setProperty('--card','#ffffff')
+        document.documentElement.style.setProperty('--muted','#274060')
+        document.documentElement.style.setProperty('--accent','#3b82f6')
+      }else{
+        document.documentElement.style.removeProperty('--bg')
+        document.documentElement.style.removeProperty('--card')
+        document.documentElement.style.removeProperty('--muted')
+        document.documentElement.style.removeProperty('--accent')
+      }
+    })
+
+    // small helper: escape for template
+    function escapeHtml(str){ return (str+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+    // small animation: count up for LC & HR
+    function animateCounts(){
+      const fromTo = [[0,profile.lc,'lcCount'],[0,profile.hr,'hrCount']]
+      fromTo.forEach(([from,to,el])=>{
+        const node = document.getElementById(el)
+        let cur = from; const step = Math.max(1, Math.floor(to/50))
+        const t = setInterval(()=>{
+          cur += step; if(cur>=to){cur=to; clearInterval(t)}; node.textContent = cur
+        },12)
+      })
+    }
+
+    // On first load, render
+    renderProfile()
+    animateCounts()
+
+    // small utility: allow adding a sample project quickly via console
+    window.addProject = function(p){ profile.projects.push(p); saveProfile(); renderProfile(); }
+
+    // if profile empty (first time), open edit to encourage customization
+    if(!localStorage.getItem('dynProfile')){
+      setTimeout(()=>document.getElementById('editProfileBtn').click(),800)
+    }
+  </script>
 </body>
 </html>
